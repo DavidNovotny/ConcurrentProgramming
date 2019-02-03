@@ -199,7 +199,39 @@ object MenWomen {
 			println("Values paired: " ++ pairedSet.mkString(", "))
 			println("Values not paired: " ++ (checkSet -- pairedSet).mkString(", "))
 		}
-		// Test using equality of sets, order doesn't matter.
+		// Test using equality of sets, order doesn't matter
+
+	}
+
+}
+
+object Ring {
+
+	val n = 10
+
+	def process0[T](x: T, left: Chan[T], right: Chan[T]) = proc("process0"){
+		right!x
+		var res = left?;
+		right!res
+		println(res)
+		res = left?      // So that last process isn't left trying to send
+	}
+
+	def process[T](x: T, f: (T,T) => T, left: Chan[T], right: Chan[T]) = proc("process0"){
+		val fst = left?;
+		var res = f(fst,x)
+		right!res
+		res = left?;
+		right!res
+		println(res)
+	}
+
+	def main(args: Array[String]) = { 
+		val chans = Array.fill(n)(OneOne[Int])
+		val p0 = process0[Int](0,chans(n-1),chans(0))
+		def f = ((x: Int, y: Int) => x+y)
+		val procs = || (for (i <- 1 until n) yield process(i,f,chans(i-1),chans(i)))
+		run(p0 || procs)
 	}
 
 }
