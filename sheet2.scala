@@ -225,6 +225,12 @@ object Ring {
 		right!res
 		println(res)
 	}
+	/*
+	The type signature can be made more general, concretely (x: T, f: (U,T) => U, left: Chan[U], right: Chan[U]),
+	but this requires a special channel of type Chan[T] between process0 and process1. I have not done this for
+	the sake of clarity, but such extension is not hard to implement. I assume this exercise is more about actually
+	implementing ring topology than about polymorphisms.
+	*/
 
 	def main(args: Array[String]) = { 
 		val chans = Array.fill(n)(OneOne[Int])
